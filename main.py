@@ -17,11 +17,16 @@ display_height = 600
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('Slither')
 
+font = pygame.font.SysFont(None, 35)
 
 def draw_snake(snake_block, snake_list):
     for x in snake_list:
         pygame.draw.rect(gameDisplay, black, [x[0], x[1], snake_block, snake_block])
 
+
+def display_score(score):
+    value = font.render("Your Score: " + str(score), True, black)
+    gameDisplay.blit(value, [0, 0])
 
 
 def gameLoop():
@@ -36,6 +41,8 @@ def gameLoop():
     snake_block = 10
     snake_list = []
     lengh_of_snake = 1
+
+    score = 0
 
     foodx = round(random.randrange(0, display_width - snake_block) / 10.0) * 10.0
     foody = round(random.randrange(0, display_height - snake_block) / 10.0) * 10.0
@@ -61,6 +68,10 @@ def gameLoop():
         if x1 >= display_width or x1 < 0 or y1 >= display_height or y1 < 0:
             gameExit = True
 
+        for coord in snake_list[:-1]:
+            if coord[0] == x1 and coord[1] == y1:
+                gameExit = True
+
         x1 += x1_change
         y1 += y1_change
 
@@ -76,12 +87,14 @@ def gameLoop():
             del snake_list[0]
 
         draw_snake(snake_block, snake_list)
+        display_score(score)
         pygame.display.update()
 
         if x1 == foodx and y1 == foody:
             foodx = round(random.randrange(0, display_width - snake_block) / 10.0) * 10.0
             foody = round(random.randrange(0, display_height - snake_block) / 10.0) * 10.0
             lengh_of_snake += 1
+            score += 10
 
 
         time.sleep(0.1)
